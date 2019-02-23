@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Adam Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 13px Helvetica, Arial;
+    }
+
+    form {
+      background: rgb(218, 216, 216);
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 9;
+      padding: 10px;
+      width: 100%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 30%;
+      background-color: #4CAF50;
+      ;
+      border: aqua;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    form button:hover {
+      background-color: #45a049;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+  </style>
+</head>
+
+<body>
+  <table style="width: 100%" style="background: azure">
+    <tr>
+      <td width="30%" valign="top">
+        <h3 id="user">Your username is: </h3>
+        <h3> The following users are online: </h3>
+        <ul id="users"></ul>
+        <form action="" id="saveusername">
+          <label for="username">User Name</label>
+          <input id="username" autocomplete="off" placeholder="User name" /><button>save</button>
+        </form>
+      </td>
+      <td width="70%">
+        <ul id="messages"></ul>
+        <form action="" id="sendmsg">
+          <label for="message">Write Message</label>
+          <input id="msg" autocomplete="off" placeholder="Write message" /><button>Send</button>
+        </form>
+      </td>
+    </tr>
+  </table>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(function () {
+      var socket = io();
+      var username;
+
+      $('#sendmsg').submit(function (e) {
+        e.preventDefault();
+        if (username == null) {
+          alert("You must first enter a username");
+          return;
+        }
+        socket.emit('chat_msg', username, $('#msg').val());
+        $('#msg').val('');
+        return false;
+      });
+
+      $('#saveusername').submit(function (e) {
+        e.preventDefault();
+        if (username == null) {
+          username = $('#username').val();
+          socket.emit('register_user', username);
+        } else {
+          username = $('#username').val();
+          socket.emit('update_username', oldname, username);
+        }
+        $('#user').text('Your username is: ' + username);
+      });
+
+      socket.on('chat_msg', function (msg) {
+        $('#messages').append($('<li>').text(msg));
+      });
+
+      socket.on('refresh_users', function (users) {
+        $('#users').empty();
+        users.forEach(element => {
+          $('#users').append($('<li>').text(element))
+        });
+      });
+
+      socket.on('server_error', function(msg) {
+        alert(msg);
+      });
+    });
+  </script>
+</body>
+
+</html>
