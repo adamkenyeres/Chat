@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Adam Chat</title>
+  <title>Chat</title>
   <style>
     * {
       margin: 0;
@@ -119,10 +119,10 @@
         if(typing == false) {
           typing = true;
           socket.emit('typing', true);
-          timeout = setTimeout(typingTimeout, 5000);
+          timeout = setTimeout(typingTimeout, typingTimeoutLimit);
         } else {
           clearTimeout(timeout);
-          timeout = setTimeout(typingTimeout, 5000);
+          timeout = setTimeout(typingTimeout, typingTimeoutLimit);
         }
       });
       
@@ -147,7 +147,7 @@
           $('#typing').append($('<li>').text(username + ' is typing'));
         });
       });
-      
+
       socket.on('server_error', function(msg) {
         alert(msg);
       });
