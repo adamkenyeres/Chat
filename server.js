@@ -2,40 +2,58 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http)
 
-var users = [];
+var usernames = {};
+var usersTyping = [];
+var anonymusUserCount = 0;
 
-app.get('/', function(req, res) {
-    res.sendFile(__dirname+'/index.html');
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(client) {
-    
-    client.on('register_user', handleRegister);
-    
-    client.on('chat_msg', handleMessage);
-    
-    client.on('update_user',  handleUpdateUser);
-    
-    console.log('a user connected', client.id);
-    
-    client.on('disconect', function() {
-        console.log('a user disconected');
+io.on('connection', function (client) {
+
+    initializeConnection(client);
+
+    client.on('register_user', function (newName) {
+        handleRegister(newName, client);
     });
 
-    io.emit('refresh_users', users);
+    client.on('disconnect', function () {
+        handleDisconnect(client);
+    });
+
+    client.on('typing', function(isUserTyping) {
+        handleTyping(isUserTyping, client);
+    });
+
+    client.on('chat_msg', handleMessage);
+
+    console.log('a user connected', client.id);
+
+    io.emit('refresh_users', usernames);
 });
 
-var handleRegister = function register(username){
-    console.log('asd');
-     if(users.indexOf(username) <= -1) {
-        users.push(username);
-        io.emit('refresh_users', users);
+function initializeConnection(client) {
+    anonymusUserCount++;
+    var name = 'Anonymus' + anonymusUserCount;
+    handleRegister(name, client);
+    client.emit('update_username', client.user_name);
+}
+
+var handleRegister = function (newName, client) {
+    var msg;
+    if(!client.user_name) {
+        msg = newName + ' joined';
     } else {
-        io.emit('server_error', 'Username taken');
+        msg = client.user_name + ' changed user name to ' + newName;
     }
-    users.forEach(function(item) {
-        console.log(item);
-    }) 
+
+    client.user_name = newName;
+    usernames[client.id] = client.user_name;
+
+    console.log(msg);
+    io.emit('refresh_users', usernames);
+    io.emit('chat_msg', msg);
 }
 
 var handleMessage = function (username, msg) {
@@ -44,16 +62,25 @@ var handleMessage = function (username, msg) {
     io.emit('chat_msg', message);
 }
 
-var handleUpdateUser = function() {
-    var userid = users.indexOf(username);
-    if(userid <= -1) {
-        io.emit('server_error', 'Error with username');
+
+var handleTyping = function(isUserTyping, client) {
+    if(isUserTyping) {
+        usersTyping.push(client.user_name);
     } else {
-        users[userid] = newuser;
-        io.emit('refresh_users', users);
+        var index = usersTyping.indexOf(client.user_name);
+        usersTyping.splice(index, 1);
     }
+
+    io.emit('typing', usersTyping);
 }
 
-http.listen(8080, function(){
+function handleDisconnect(client) {
+    var msg = client.user_name + ' disconnected';
+    delete usernames[client.id];
+    io.emit('refresh_users', usernames);
+    io.emit('chat_msg', msg);
+}
+
+http.listen(8080, function () {
     console.log('Server started');
 });

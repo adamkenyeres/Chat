@@ -43,8 +43,16 @@
     }
 
     #messages {
+      bottom: 0;
       list-style-type: none;
       margin: 0;
+      padding: 0;
+    }
+  
+    #typing {
+      list-style-type: none;
+      margin: 0;
+      vertical-align: bottom;
       padding: 0;
     }
 
@@ -72,6 +80,7 @@
       </td>
       <td width="70%">
         <ul id="messages"></ul>
+        <ul id="typing"></ul>
         <form action="" id="sendmsg">
           <label for="message">Write Message</label>
           <input id="msg" autocomplete="off" placeholder="Write message" /><button>Send</button>
@@ -85,6 +94,8 @@
     $(function () {
       var socket = io();
       var username;
+      var typing = false;
+      var typingTimeoutLimit = 2000;
 
       $('#sendmsg').submit(function (e) {
         e.preventDefault();
@@ -99,30 +110,52 @@
 
       $('#saveusername').submit(function (e) {
         e.preventDefault();
-        if (username == null) {
-          username = $('#username').val();
-          socket.emit('register_user', username);
-        } else {
-          username = $('#username').val();
-          socket.emit('update_username', oldname, username);
-        }
+        username = $('#username').val();
+        socket.emit('register_user', username);
         $('#user').text('Your username is: ' + username);
       });
 
+      $('#msg').keypress(function() {
+        if(typing == false) {
+          typing = true;
+          socket.emit('typing', true);
+          timeout = setTimeout(typingTimeout, 5000);
+        } else {
+          clearTimeout(timeout);
+          timeout = setTimeout(typingTimeout, 5000);
+        }
+      });
+      
       socket.on('chat_msg', function (msg) {
         $('#messages').append($('<li>').text(msg));
       });
 
       socket.on('refresh_users', function (users) {
         $('#users').empty();
-        users.forEach(element => {
-          $('#users').append($('<li>').text(element))
+        $.each(users, function(index, value) {
+          $('#users').append($('<li>').text(value))
         });
       });
 
+      socket.on('update_username', function(username) {
+        $('#user').text('Your username is: ' + username);
+      });
+
+      socket.on('typing',function(users) {
+        $('#typing').empty();
+        $.each(users, function(index, username) {
+          $('#typing').append($('<li>').text(username + ' is typing'));
+        });
+      });
+      
       socket.on('server_error', function(msg) {
         alert(msg);
       });
+
+      function typingTimeout() {
+        typing = false;
+        socket.emit('typing', false);
+      }
     });
   </script>
 </body>
