@@ -2,13 +2,14 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http)
 
-var usernames = {};
+var users = {};
 var usersTyping = [];
+var messageHistory = [];
 var anonymusUserCount = 0;
 
-app.get('/', function (req, res) {
+/* app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
-});
+}); */
 
 io.on('connection', function (client) {
 
@@ -30,7 +31,10 @@ io.on('connection', function (client) {
 
     console.log('a user connected', client.id);
 
-    io.emit('refresh_users', usernames);
+    io.emit('load_message_history', messageHistory);
+
+    io.emit('refresh_users', getOnlineUsers());
+
 });
 
 function initializeConnection(client) {
@@ -41,24 +45,27 @@ function initializeConnection(client) {
 }
 
 var handleRegister = function (newName, client) {
-    var msg;
+    var textMessage;
     if(!client.user_name) {
-        msg = newName + ' joined';
+        textMessage = newName + ' joined';
     } else {
-        msg = client.user_name + ' changed user name to ' + newName;
+        textMessage = client.user_name + ' changed user name to ' + newName;
     }
 
+    var message = {user:'Server', text: textMessage};
     client.user_name = newName;
-    usernames[client.id] = client.user_name;
+    users[client.id] = client.user_name;
 
-    console.log(msg);
-    io.emit('refresh_users', usernames);
-    io.emit('chat_msg', msg);
+    console.log(textMessage);
+    messageHistory.push(message);
+    io.emit('refresh_users', getOnlineUsers());
+    io.emit('chat_msg', message);
 }
 
-var handleMessage = function (username, msg) {
-    var message = username + ': ' + msg;
-    console.log('message: ' + message);
+var handleMessage = function (message) {
+    var msg = message.user + ': ' + message.text;
+    console.log('message: ' + msg);
+    messageHistory.push(message);
     io.emit('chat_msg', message);
 }
 
@@ -75,12 +82,19 @@ var handleTyping = function(isUserTyping, client) {
 }
 
 function handleDisconnect(client) {
-    var msg = client.user_name + ' disconnected';
-    delete usernames[client.id];
-    io.emit('refresh_users', usernames);
-    io.emit('chat_msg', msg);
+    var text = client.user_name + ' disconnected';
+    var message = {user: 'Server', text: text};
+    delete users[client.id];
+    messageHistory.push(message);
+    io.emit('refresh_users', getOnlineUsers());
+    io.emit('chat_msg', message);
 }
 
+function getOnlineUsers() {
+    return  Object.keys(users).map(function(key) {
+        return  users[key];
+    });
+}
 http.listen(8080, function () {
     console.log('Server started');
 });

@@ -140,6 +140,12 @@
       socket.on('update_username', function(username) {
         $('#user').text('Your username is: ' + username);
       });
+      
+      socket.on('load_message_history', function(history) {
+        $.each(history, function(index, msg) {
+          $('#messages').append($('<li>').text(msg));
+        });
+      });
 
       socket.on('typing',function(users) {
         $('#typing').empty();
