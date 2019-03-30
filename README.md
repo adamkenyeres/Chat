@@ -33,5 +33,4 @@ First of all make sure Node and npm are installed.
 
 You should be able to access the application via http://localhost:3000/.
 
-You may also like to change config.json to use different ports and settings..
 
