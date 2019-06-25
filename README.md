@@ -20,12 +20,19 @@ First of all make sure Node and npm are installed.
     $ git clone https://github.com/adamkenyeres/Chat.git
     $ cd Chat
     ```
-2. Start the server:
+2. Install the dependencies for node and react:
+
+    ```
+    $ npm install
+    $ cd client
+    $ npm install
+    ```
+3. Start the server (from root directory):
 
     ```
     $ npm start server
     ```
-3. Start React the frontend:
+4. Start React the frontend:
     ```
     $ cd client
     $ npm start
