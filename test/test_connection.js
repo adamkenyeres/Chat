@@ -1,54 +1,81 @@
-var io = require('socket.io-client');
-var io_server = require('socket.io').listen(8080);
 var expect = require('chai').expect;
+var io = require('socket.io-client'),
+  server = require('../server');
 
-describe('basic socket.io example', function () {
+describe('Basic server testing', function () {
 
   var client1;
   var client2;
-
-  beforeEach(function (done) {
-    // Setup
-    client1 = io.connect('http://localhost:8080', {
-      'reconnection delay': 0
-      , 'reopen delay': 0
-      , 'force new connection': true
-      , transports: ['websocket']
+  var client3;
+  var socketURL = 'http://localhost:8080';
+  var options = {
+    'reconnection delay': 0
+    , 'reopen delay': 0
+    , 'force new connection': true
+    , transports: ['websocket']
+  };
+  
+    it('should broadcast default username once someone joins', function (done) {
+      var msgCount = 0;
+      var checkMessage = function (user, text, msg, client) {
+        expect(text).to.equal(msg.text);
+        expect(user).to.equal(msg.user);
+        client.disconnect();
+        msgCount++;
+        if (msgCount == 2) {
+          done();
+        }
+      }
+      client1 = io.connect(socketURL, options);
+      client1.on('connect', function (data) {
+  
+        client1.on('chat_msg', function (msg) {
+          checkMessage('Server', 'Anonymus1 joined', msg, client1)
+        });
+        client2 = io.connect(socketURL, options);
+        client2.on('connect', function (msg) {
+          client2.on('chat_msg', function (msg) {
+            checkMessage('Server', 'Anonymus2 joined', msg, client2)
+          });
+        });
+      });
     });
-
-    client1.on('connect', () => {
-      console.log('Client1 connected...');
-      done();
-    });
-  });
-
-  afterEach((done) => {
-    // Cleanup
-    client1.on('disconnect', () => {
-      console.log('Client1 disconnected...');
-   });
-
-    if (client1.connected) {
-      client1.disconnect();
+/*
+  it('should broadcast messages to all members', function (done) {
+    var checkMessage = function (user, text, client) {
+      client.on('chat_msg', function (msg) {
+        console.log(msg.text)
+        msgCount++;
+        if (msgCount > 2) {
+          expect(text).to.equal(msg.text);
+          expect(user).to.equal(msg.user);
+          client.disconnect();
+          if (msgCount == 3) {
+            done();
+          }
+        }
+      });
     }
-    
-    io_server.close();
-    done();
-  });
 
-  it('Server should send message', (done) => {
-    var message = {user:'Server', text: 'Hi how are you'};
-    io_server.emit('chat_msg', message);
+    var msgCount = 0;
+    var message = { user: 'Anonymus3', text: 'Hi everyone' };
 
-    client1.once('chat_msg', (msg) => {
-      expect(msg.text).to.equal(message.text);
-      expect(msg.user).to.equal(message.user);
+    client1 = io.connect(socketURL, options);
+    client1.on('connect', function (data) {
+      checkMessage("Server", "Anonymus1 joined", client1);
+      client2 = io.connect(socketURL, options);
+      client2.on('connect', function (msg) {
+        checkMessage("Server", "Anonymus2 joined", client2);
+        client3 = io.connect(socketURL, options);
+        client3.on('connect', function (msg) {
+          checkMessage("Server", "Anonymus3 joined", client3);
+          client2.emit('chat_msg', message)
+          checkMessage("Anonymus3", "Hi everyone", client1);
+          checkMessage("Anonymus3", "Hi everyone", client2);
+          checkMessage("Anonymus3", "Hi everyone", client3);
+        });
+      });
     });
-
-    io_server.on('connection', (socket) => {
-      expect(socket).to.not.be.null;
-    });
-    done();
   });
-
+*/
 });

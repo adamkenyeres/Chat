@@ -40,4 +40,14 @@ First of all make sure Node and npm are installed.
 
 You should be able to access the application via http://localhost:3000/.
 
+## Running the tests
 
+Automated tests had been written with mocha and chai.
+
+Test files are located under ./test
+
+Running the tests:
+
+    ```
+    $ npm test
+    ```
