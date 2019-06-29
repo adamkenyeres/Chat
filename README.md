@@ -47,7 +47,6 @@ Automated tests had been written with mocha and chai.
 Server related test files are located under ./test
 
 Running the tests:
-
-    ```
-    $ npm test
-    ```
+```
+$ npm test
+ ```
