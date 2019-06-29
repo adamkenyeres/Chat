@@ -44,7 +44,7 @@ You should be able to access the application via http://localhost:3000/.
 
 Automated tests had been written with mocha and chai.
 
-Test files are located under ./test
+Server related test files are located under ./test
 
 Running the tests:
 

@@ -122,11 +122,10 @@ describe('Basic server testing', function () {
 
   it('should broadcast usernames once a username is updated', function (done) {
     var onlineUserCount = 0;
-    var expectedUsers = [ 'Anonymus8', 'Johsh' ];
+    var expectedUsers = ['Anonymus8', 'Johsh'];
 
     var chekcOnlineUsers = function (client) {
       client.on('refresh_users', function (users) {
-        console.log(users)
         onlineUserCount++;
         if (onlineUserCount == 6) { // #Issue3
           expect(expectedUsers).to.eql(users);
@@ -142,6 +141,71 @@ describe('Basic server testing', function () {
       client2 = io.connect(socketURL, options);
       client2.on('connect', function (msg) {
         client2.emit('register_user', 'Johsh');
+        client2.disconnect();
+      });
+    });
+  });
+
+  /* Test5 
+   * Given client1 and client2 are connected
+   * When client2 is typing
+   * Then client1 shall be notified that client2 is typing */
+
+  it('should broadcast typing users once a user is typing', function (done) {
+    var usersTypingCount = 0;
+
+    var chekcTypingUsers = function (client) {
+      client.on('typing', function (typingUsers) {
+        usersTypingCount++;
+        if (usersTypingCount == 1) { // First event client2 is typing
+          expect(['Anonymus11']).to.eql(typingUsers);
+        } else if (usersTypingCount == 2) { // Second event client2 is not typing
+          expect([]).to.eql(typingUsers);
+          client.disconnect();
+          done();
+        }
+      });
+    }
+    client1 = io.connect(socketURL, options);
+    client1.on('connect', function (data) {
+      chekcTypingUsers(client1);
+
+      client2 = io.connect(socketURL, options);
+      client2.on('connect', function (msg) {
+        client2.emit('typing', true);
+        client2.emit('typing', false);
+        client2.disconnect();
+      });
+    });
+  });
+  
+  /* Test6 
+   * Given client1 and client2 are connected
+   * When client2 emits typing multiple times
+   * Then client1 shall only be notified that client2 is typing once*/
+  it('should not broadcast same typing user more than once', function (done) {
+    var usersTypingCount = 0;
+
+    var chekcTypingUsers = function (client) {
+      client.on('typing', function (typingUsers) {
+        usersTypingCount++;
+        if (usersTypingCount == 1) { // First event client2 is typing
+          expect(['Anonymus13']).to.eql(typingUsers);
+        } else if (usersTypingCount == 2) { // Second event client2 is typing
+          expect(['Anonymus13']).to.eql(typingUsers); //Fix: #Issue5
+          client.disconnect();
+          done();
+        }
+      });
+    }
+    client1 = io.connect(socketURL, options);
+    client1.on('connect', function (data) {
+      chekcTypingUsers(client1);
+
+      client2 = io.connect(socketURL, options);
+      client2.on('connect', function (msg) {
+        client2.emit('typing', true);
+        client2.emit('typing', true);
         client2.disconnect();
       });
     });
