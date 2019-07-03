@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Messages should render correctly 1`] = `
+<ul
+  className="Messages-list"
+>
+  <li
+    className="Messages-message"
+  >
+    <div
+      className="Message-content"
+    >
+      <div
+        className="message-user"
+      />
+      <div
+        className="Message-text"
+      />
+    </div>
+  </li>
+  <li
+    className="Messages-message"
+  >
+    <div
+      className="Message-content"
+    >
+      <div
+        className="message-user"
+      />
+      <div
+        className="Message-text"
+      />
+    </div>
+  </li>
+</ul>
+`;
