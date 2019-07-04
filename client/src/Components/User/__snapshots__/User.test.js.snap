@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`User name should render correctly 1`] = `
+<h3
+  id="user"
+>
+  Your username is: 
+  Adam
+   
+</h3>
+`;
