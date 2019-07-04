@@ -12,10 +12,14 @@ exports[`Messages should render correctly 1`] = `
     >
       <div
         className="message-user"
-      />
+      >
+        Adam
+      </div>
       <div
         className="Message-text"
-      />
+      >
+        Hi
+      </div>
     </div>
   </li>
   <li
@@ -26,10 +30,39 @@ exports[`Messages should render correctly 1`] = `
     >
       <div
         className="message-user"
-      />
+      >
+        John
+      </div>
       <div
         className="Message-text"
-      />
+      >
+        Hi How are you?
+      </div>
+    </div>
+  </li>
+</ul>
+`;
+
+exports[`Messages should render correctly with one message 1`] = `
+<ul
+  className="Messages-list"
+>
+  <li
+    className="Messages-message"
+  >
+    <div
+      className="Message-content"
+    >
+      <div
+        className="message-user"
+      >
+        Adam
+      </div>
+      <div
+        className="Message-text"
+      >
+        Hi How are you?
+      </div>
     </div>
   </li>
 </ul>
