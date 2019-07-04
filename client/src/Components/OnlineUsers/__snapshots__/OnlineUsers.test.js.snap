@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Online Users should render correctly with multiple users 1`] = `
+<div>
+  <h3>
+    The following users are online:
+  </h3>
+  <ul
+    className="OnlineUsers-list"
+  >
+    <li
+      className="OnlineUser"
+    >
+      <div
+        className="OnlineUser-content"
+      >
+        <div
+          className="OnlineUser-username"
+        >
+          Adam
+        </div>
+      </div>
+    </li>
+    <li
+      className="OnlineUser"
+    >
+      <div
+        className="OnlineUser-content"
+      >
+        <div
+          className="OnlineUser-username"
+        >
+          John
+        </div>
+      </div>
+    </li>
+    <li
+      className="OnlineUser"
+    >
+      <div
+        className="OnlineUser-content"
+      >
+        <div
+          className="OnlineUser-username"
+        >
+          Josh
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`Online Users should render correctly with no user 1`] = `
+<div>
+  <h3>
+    The following users are online:
+  </h3>
+  <ul
+    className="OnlineUsers-list"
+  >
+    <li
+      className="OnlineUser"
+    >
+      <div
+        className="OnlineUser-content"
+      >
+        <div
+          className="OnlineUser-username"
+        />
+      </div>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`Online Users should render correctly with one user 1`] = `
+<div>
+  <h3>
+    The following users are online:
+  </h3>
+  <ul
+    className="OnlineUsers-list"
+  >
+    <li
+      className="OnlineUser"
+    >
+      <div
+        className="OnlineUser-content"
+      >
+        <div
+          className="OnlineUser-username"
+        >
+          Adam
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+`;
