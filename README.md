@@ -42,11 +42,25 @@ You should be able to access the application via http://localhost:3000/.
 
 ## Running the tests
 
+### Server
+
 Automated tests had been written with mocha and chai.
 
 Server related test files are located under ./test
 
 Running the tests:
 ```
+$ npm test
+ ```
+
+### Client
+
+Automated tests had been written with Jest and Enzyme.
+
+Client related test files are located next to each component.
+
+Running the tests:
+```
+$ cd client
 $ npm test
  ```
