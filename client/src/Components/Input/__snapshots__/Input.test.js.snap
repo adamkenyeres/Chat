@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input Should render correctly 1`] = `
+<div
+  className="Input"
+>
+  <form
+    onSubmit={[Function]}
+  >
+    <input
+      autoFocus={true}
+      onChange={[Function]}
+      placeholder="Enter username"
+      type="text"
+      value=""
+    />
+    <button>
+       
+      Save
+       
+    </button>
+  </form>
+</div>
+`;

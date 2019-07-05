@@ -17,7 +17,7 @@ class Input extends Component {
                         value={this.state.text}
                         type="text"
                         placeholder={placeholder}//"Write message"
-                        autoFocus="true" />
+                        autoFocus={true} />
                     <button> {buttonText} </button>
                 </form>
             </div>
