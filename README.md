@@ -66,4 +66,4 @@ $ npm test
  ```
  ## Contributing
  
- If you are interested in contributing please create an issues and request pullrequests. 
+ If you are interested in contributing please create issues and request pullrequests. 
