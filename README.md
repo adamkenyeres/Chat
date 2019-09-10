@@ -64,3 +64,6 @@ Running the tests:
 $ cd client
 $ npm test
  ```
+ ## Contributing
+ 
+ If you are interested in contributing please create an issues and request pullrequests. 
